@@ -2,3 +2,4 @@
 *~
 exercises.cabal
 stack.yaml.lock
+dist-newstyle/
