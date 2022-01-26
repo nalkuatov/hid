@@ -20,6 +20,19 @@ data Direction = North | East | South | West
 data Turn = TNone | TLeft | TRight | TAround
   deriving (Eq, Enum, Bounded, Show)
 
+instance Semigroup Turn where
+  TNone   <> a       = a
+  TLeft   <> TLeft   = TAround
+  TLeft   <> TRight  = TNone
+  TLeft   <> TAround = TRight
+  TRight  <> TAround = TLeft
+  TRight  <> TRight  = TAround
+  TAround <> TAround = TNone
+  t1 <> t2 = t2 <> t1
+
+instance Monoid Turn where
+  mempty = TNone
+
 rotate :: Turn -> Direction -> Direction
 rotate TNone = id
 rotate TLeft = cpred
@@ -34,7 +47,7 @@ orient a b = head $ filter
   ((== b) . flip rotate a) every
 
 rotateMany :: [Turn] -> Direction -> Direction
-rotateMany turns a = foldl (flip rotate) a turns
+rotateMany turns = rotate $ mconcat turns
 
 rotateManySteps :: [Turn] -> Direction -> [Direction]
 rotateManySteps turns a = scanl (flip rotate) a turns
