@@ -1,6 +1,9 @@
-{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveAnyClass     #-}
+{-# LANGUAGE StandaloneDeriving #-}
 
 module CH02.Playground where
+
+import Fmt
 
 class (Eq a, Enum a, Bounded a) => CyclicEnum a where
 
@@ -33,10 +36,25 @@ instance Semigroup Turn where
 instance Monoid Turn where
   mempty = TNone
 
+deriving instance Read Turn
+deriving instance Read Direction
+
+instance Buildable Direction where
+  build North = "N"
+  build South = "S"
+  build West  = "W"
+  build East  = "E"
+
+instance Buildable Turn where
+  build TNone = "--"
+  build TRight = "->"
+  build TLeft  = "<-"
+  build TAround = "||"
+
 rotate :: Turn -> Direction -> Direction
-rotate TNone = id
-rotate TLeft = cpred
-rotate TRight = csucc
+rotate TNone   = id
+rotate TLeft   = cpred
+rotate TRight  = csucc
 rotate TAround = cpred . cpred
 
 every :: (Enum a, Bounded a) => [a]
@@ -57,7 +75,10 @@ orientMany ds@(a : b : rest) = orient a b : (orientMany $ b : rest)
 orientMany _ = []
 
 rotateFromFile :: Direction -> FilePath -> IO Direction
-rotateFromFile = undefined
+rotateFromFile dir file = do
+  turns <- map read . lines <$> readFile file
+  fmt $ unwordsF turns
+  pure $ rotateMany turns dir
 
 main :: IO ()
 main = undefined
