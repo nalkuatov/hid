@@ -4,6 +4,7 @@
 module CH02.Playground where
 
 import Fmt
+import System.Random
 
 class (Eq a, Enum a, Bounded a) => CyclicEnum a where
 
@@ -38,6 +39,7 @@ instance Monoid Turn where
 
 deriving instance Read Turn
 deriving instance Read Direction
+deriving instance Ord Turn
 
 instance Buildable Direction where
   build North = "N"
@@ -46,9 +48,9 @@ instance Buildable Direction where
   build East  = "E"
 
 instance Buildable Turn where
-  build TNone = "--"
-  build TRight = "->"
-  build TLeft  = "<-"
+  build TNone   = "--"
+  build TRight  = "->"
+  build TLeft   = "<-"
   build TAround = "||"
 
 rotate :: Turn -> Direction -> Direction
@@ -74,11 +76,14 @@ orientMany :: [Direction] -> [Turn]
 orientMany ds@(a : b : rest) = orient a b : (orientMany $ b : rest)
 orientMany _ = []
 
-rotateFromFile :: Direction -> FilePath -> IO Direction
+rotateFromFile :: Direction -> FilePath -> IO ()
 rotateFromFile dir file = do
   turns <- map read . lines <$> readFile file
-  fmt $ unwordsF turns
-  pure $ rotateMany turns dir
+  fmt $ nameF "The turns are: " $ unwordsF turns
+  let result = rotateMany turns dir
+  let dirs   = rotateManySteps turns dir
+  fmtLn $ "The resultant direction is: "+||result||+""
+  fmtLn $ nameF "Intermediate directions are: " $ unwordsF dirs
 
 main :: IO ()
 main = undefined
