@@ -4,6 +4,9 @@
 module CH02.Playground where
 
 import Fmt
+import Control.Monad
+import Control.Monad.IO.Class
+import System.Random.Stateful
 import System.Random
 
 class (Eq a, Enum a, Bounded a) => CyclicEnum a where
@@ -84,6 +87,31 @@ rotateFromFile dir file = do
   let dirs   = rotateManySteps turns dir
   fmtLn $ "The resultant direction is: "+||result||+""
   fmtLn $ nameF "Intermediate directions are: " $ unwordsF dirs
+
+---------------------------------------------
+-- RANDOMNESS
+---------------------------------------------
+
+instance UniformRange Direction where
+  uniformRM (lo, hi) rng = do
+    rn <- uniformRM (fromEnum lo, fromEnum hi) rng
+    pure $ toEnum rn
+
+instance Uniform Direction where
+  uniformM =
+    uniformRM (minBound, maxBound)
+
+uniformIO :: (MonadIO m, Uniform a) => m a
+uniformIO = getStdRandom uniform
+
+uniformsIO :: Uniform a => Int -> IO [a]
+uniformsIO n = replicateM n uniformIO
+
+writeRandomFile :: (Uniform a, Show a)
+  => Int -> (Int -> IO [a]) -> FilePath -> IO ()
+writeRandomFile n gen file = do
+  values <- gen n
+  writeFile file $ unlines $ map show values
 
 main :: IO ()
 main = undefined
