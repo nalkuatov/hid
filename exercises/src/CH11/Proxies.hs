@@ -1,8 +1,9 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE PolyKinds #-}
 
-module CH11.Playground where
+module CH11.Proxies where
 
 import Data.Kind
 import Data.Proxy
@@ -25,7 +26,7 @@ f2c (Temp f) = Temp $ (f - 32) * 5 / 9
 nonsense :: Temp Bool
 nonsense = 0
 
-class UnitName (u :: Type) where
+class UnitName u where
   name :: Proxy u -> String
 
 instance UnitName F where
@@ -41,6 +42,9 @@ instance UnitName unit => UnitName (Temp unit) where
 
 instance UnitName unit => Show (Temp unit) where
   show (Temp t) = show t <> "°" <> name (Proxy :: Proxy unit)
+
+instance UnitName Temp where
+  name _ = "_unspecified unit_"
 
 data K
 
