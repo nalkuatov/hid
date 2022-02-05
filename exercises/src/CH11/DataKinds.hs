@@ -36,3 +36,17 @@ maybePtr p
   | otherwise = Nothing
   where
     (_, remainder) = divMod p $ natVal (Proxy :: Proxy align)
+
+------------------------------
+-- employees and organisations
+------------------------------
+
+newtype Suffixed (s :: Symbol) =
+  SS String
+
+emp :: String -> Suffixed org
+emp = SS
+
+toString :: forall org. KnownSymbol org
+  => Suffixed org -> String
+toString (SS s) = s ++ "@" ++ symbolVal (Proxy :: Proxy org)
