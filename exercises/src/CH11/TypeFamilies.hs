@@ -68,21 +68,21 @@ showLitString' ('"' : cs) s = showString "\\\"" (showLitString' cs s)
 showLitString' (c : cs) s = showLitChar' c (showLitString' cs s)
 ---------------
 
-type family UnescapingTF (a :: k) :: k where
-  UnescapingTF Char = UnescapingChar
-  UnescapingTF (t b :: k) = (UnescapingTF t) (UnescapingTF b)
-  UnescapingTF a = a
-
-class ToUnescaping a where
-  toUnescaping :: a -> UnescapingTF a
-
-instance Show a => ToUnescaping a where
-  toUnescaping = unsafeCoerce
-
-type UnescapingShow t = (ToUnescaping t, Show (UnescapingTF t))
-
-ushow :: UnescapingShow a => a -> String
-ushow = show . toUnescaping
-
-uprint :: UnescapingShow a => a -> IO ()
-uprint = putStrLn . ushow
+--  type family UnescapingTF (a :: k) :: k where
+--  UnescapingTF Char = UnescapingChar
+--  UnescapingTF (t b :: k) = (UnescapingTF t) (UnescapingTF b)
+--  UnescapingTF a = a
+--
+--  class ToUnescaping a where
+--  toUnescaping :: a -> UnescapingTF a
+--
+--  instance Show a => ToUnescaping a where
+--  toUnescaping = unsafeCoerce
+--
+--  type UnescapingShow t = (ToUnescaping t, Show (UnescapingTF t))
+--
+--  ushow :: UnescapingShow a => a -> String
+--  ushow = show . toUnescaping
+--
+--  uprint :: UnescapingShow a => a -> IO ()
+--  uprint = putStrLn . ushow

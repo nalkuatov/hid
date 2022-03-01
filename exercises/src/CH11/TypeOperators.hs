@@ -12,7 +12,7 @@ data a * b = a :*: b
 infixl 6 +
 infixl 7 *
 
-test :: Bool :*: String
+test :: Bool * String
 test = False :*: "prodigious"
 
 test2 :: Bool + String
