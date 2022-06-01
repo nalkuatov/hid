@@ -9,6 +9,11 @@ dependencies:
   - aeson
   - OddWord
   - int-cast
+  - time
+  - servant
+  - servant-client
+  - exceptions
+  - megaparsec
 
 default-extensions:
   - OverloadedStrings
