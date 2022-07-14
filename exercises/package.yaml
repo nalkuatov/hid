@@ -12,7 +12,9 @@ dependencies:
   - time
   - servant
   - servant-client
+  - servant-client-core
   - exceptions
+  - mtl
   - megaparsec
 
 default-extensions:
